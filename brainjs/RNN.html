@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>Neural Network with JavaScript: recurrent neural network</title>
+    <script src="./js/browser.min.js"></script>
+
+</head>
+
+<body>
+    Training Data: <div id="train"></div>
+    Test Data: <div id="input"></div>
+    Prediction Result: <div id="output"></div>
+
+    <script>
+        // provide optional config object (or undefined). Defaults shown.
+        
+const config = {
+    inputSize: 20,
+    inputRange: 20,
+    hiddenLayers: [20,20], // array of ints for the sizes of the hidden layers in the network
+    outputSize: 20,
+    learningRate: 0.01,
+    decayRate: 0.999,
+};
+
+console.log(config);
+
+        // create a simple recurrent neural network
+const net = new brain.recurrent.RNN(config);
+
+        const traindata = [{
+                input: [0, 0],
+                output: [0]
+            },
+            {
+                input: [0, 1],
+                output: [1]
+            },
+            {
+                input: [1, 0],
+                output: [1]
+            },
+            {
+                input: [1, 1],
+                output: [0]
+            }
+        ];
+
+        console.log(traindata);
+
+        net.train(traindata);
+
+        let testdata1 = [0, 0];
+        let testdata2 = [0, 1];
+        let testdata3 = [1, 0];
+        let testdata4 = [1, 1];
+
+        const traindisplay = document.querySelector("#train");
+        const inputdisplay = document.querySelector("#input");
+        const outputdisplay = document.querySelector("#output");
+        
+        traindata.forEach(element => {
+            traindisplay.innerHTML += "input: " + element["input"] + ", output: " + element["output"] + "; ";    
+        });
+
+        console.log(testdata1);
+        inputdisplay.innerHTML += testdata1;
+        let output = net.run(testdata1); 
+        console.log(output);
+        outputdisplay.innerHTML += output;
+        
+        console.log(testdata2);
+        inputdisplay.innerHTML += testdata2;
+        output = net.run(testdata2);
+        console.log(output);
+        outputdisplay.innerHTML += output;
+        
+        console.log(testdata3);
+        inputdisplay.innerHTML += testdata3;
+        output = net.run(testdata3);
+        console.log(output);
+        outputdisplay.innerHTML += output;
+                
+        console.log(testdata4);
+        inputdisplay.innerHTML += testdata4;
+        output = net.run(testdata4);
+        console.log(output);
+        outputdisplay.innerHTML += output;
+        
+
+        
+
+    </script>
+</body>
+
+</html>

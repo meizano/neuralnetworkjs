@@ -1,0 +1,148 @@
+<!-- STILL IN PROGRESS -->
+<!-- READ THIS: https://github.com/BrainJS/brain.js/issues/97 -->
+<!-- READ THIS: https://stackabuse.com/neural-networks-in-javascript-with-brain-js/ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>Neural Network with JavaScript: Save Trained Data</title>
+    <script src="./js/browser.min.js"></script>
+
+</head>
+
+<body>
+    Training Data: <div id="train"></div>
+    Test Data: <div id="input"></div>
+    Prediction Result: <div id="output"></div>
+
+    <script>
+        // traindata.js
+        const trainingData = [{
+            input: "Inside Chi's nursery",
+            output: {
+                kardashian: 1
+            }
+        }, {
+            input: "Why I dyed my hair pink",
+            output: {
+                kardashian: 1
+            }
+        }, {
+            input: "Feeling Blue (wearing @kkwbeauty powder contour in medium & dark contour kit as eye shadow, & a new lip coming soon)",
+            output: {
+                kardashian: 1
+            }
+        }, {
+            input: "I will be interviewed by @JudgeJeanine on @FoxNews at 9:00 P.M. Enjoy!",
+            output: {
+                trump: 1
+            }
+        }, {
+            input: "Dem Memo: FBI did not disclose who the clients were - the Clinton Campaign and the DNC. Wow!",
+            output: {
+                trump: 1
+            }
+        }, {
+            input: "Thank you to the great men and women of the United States @SecretService for a job well done!",
+            output: {
+                trump: 1
+            }
+        }]
+
+        
+        // optional: note: converting data to JSONString then to JSONObject. Useful for saving data to text file. NOTYET
+        let JSONString = JSON.stringify(trainingData);
+        console.log(JSONString);
+        let JSONObject = JSON.parse(JSONString);
+        console.log(JSONObject);
+
+        // optional: saving to file. savefile.js NOTYET
+        function saveFile() {
+            fs.writeFile("network.json", JSON.stringify(net.toJSON()), function (err) {
+                if (err)
+                    return console.log(err);
+
+                console.log("The file was saved!");
+                loadFile()
+            });
+            console.log(net0.toJSON())
+        }
+
+        function loadFile() {
+            fs.readFile('network.json', function (err, data) {
+                if (err)
+                    throw err;
+
+                console.log(data.layers);
+                net.fromJSON(data);
+                console.log("file loaded");
+            });
+        }
+
+        // script.js
+        let trainedNet;
+
+        function encode(arg) {
+            return arg.split("").map(x => (x.charCodeAt(0) / 255));
+        }
+
+        function processTrainingData(data) {
+            return data.map(d => {
+                console.log(d.input);
+                console.log(typeof d.input);
+                return {
+                    input: encode(d.input),
+                    output: d.output
+                }
+            })
+        }
+
+        function train(data) {
+            let net = new brain.NeuralNetwork();
+            net.train(processTrainingData(data));
+            trainedNet = net.toFunction();
+            console.log('Finished training...');
+        };
+
+        function execute(input) {
+            let results = trainedNet(encode(input));
+            let output;
+            results.trump > results.kardashian ? output = 'Trump' : output = 'Kardashian';
+            return output;
+        }
+
+        train(trainingData);
+
+        // execution
+
+        let testdata = "Clinton";
+        let hasil = execute(testdata);
+
+        console.log("Training Data:");
+        console.log(trainingData);
+        console.log("Input:");
+        console.log(testdata);
+        console.log("Output:");
+        console.log(hasil);
+
+        const traindisplay = document.querySelector("#train");
+        const inputdisplay = document.querySelector("#input");
+        const outputdisplay = document.querySelector("#output");
+
+        trainingData.forEach(element => {
+            traindisplay.innerHTML += "input: " + element["input"] + ", output: " + Object.keys(element[
+                "output"])[0] + "; <br/> ";
+        });
+
+        inputdisplay.innerHTML = testdata;
+        outputdisplay.innerHTML = hasil;
+    </script>
+
+    <a
+        href="https://itnext.io/you-can-build-a-neural-network-in-javascript-even-if-you-dont-really-understand-neural-networks-e63e12713a3">You
+        can build a neural network in JavaScript even if you don’t really understand neural networks</a>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>Neural Network with JavaScript: text color based on background color</title>
+    <script src="./js/browser.min.js"></script>
+    <style>
+        body {
+            font-family: helvetica neue;
+        }
+
+        #example {
+            padding: 100px;
+            background: #ff0000;
+            color: white;
+            font-size: 36px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1> Change Text based on Light or Dark Background</h1>
+    <input type="color" value="#ff0000"/>
+    <div id="example">Example Text</div>
+    <p>Reference: Machine Learning Tutorial for Beginners - USING JAVASCRIPT!
+        <a href="https://www.youtube.com/watch?v=9Hz3P1VgLz4&list=PLoYCgNOIyGABWLy_XoLSxTVRe2bltV8GM&index=1">Video</a>
+        <a href="https://codepen.io/anon/pen/NYRRQm?editors=1111">CodePen</a>
+    </p>
+
+    <script>
+        // Select DOM Element
+        const input = document.querySelector("input"); // Color picker for input
+        const example = document.querySelector("#example"); // Element affected
+
+        // Train the network
+        const network = new brain.NeuralNetwork();
+        network.train([
+            { input: { r: 0.62, g: 0.72, b: 0.88 }, output: { light: 1 } },
+            { input: { r: 0.1, g: 0.84, b: 0.72 }, output: { light: 1 } },
+            { input: { r: 0.33, g: 0.24, b: 0.29 }, output: { dark: 1 } },
+            { input: { r: 0.74, g: 0.78, b: 0.86 }, output: { light: 1 } },
+            { input: { r: 0.31, g: 0.35, b: 0.41 }, output: { dark: 1 } },
+            { input: {r: 1, g: 0.99, b: 0}, output: { light: 1 } },
+            { input: {r: 1, g: 0.42, b: 0.52}, output: { dark: 1 } },
+        ]);
+
+        // Listen to color picker
+        input.addEventListener("change", (e) => {
+            // Get RGB value of background color
+            const rgb = getRgb(e.target.value);
+            console.log(rgb);
+
+            // Check RGB value using NN
+            const result = brain.likely(rgb, network);
+            console.log(result);
+
+            // Change text color to black if the background is dark or default if its light
+            example.style.background = e.target.value;
+            example.style.color = result === "dark" ? "white" : "black";
+        });
+
+        // Function to get RGB value based on Color Hex Code, using regex
+        function getRgb(hex) {
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: Math.round(parseInt(result[1], 16) / 2.55) / 100,
+                g: Math.round(parseInt(result[2], 16) / 2.55) / 100,
+                b: Math.round(parseInt(result[3], 16) / 2.55) / 100,
+            } : null;
+        }
+    </script>
+</body>
+
+</html>
